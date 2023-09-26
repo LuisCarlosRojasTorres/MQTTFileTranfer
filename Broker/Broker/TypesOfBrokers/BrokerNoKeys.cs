@@ -34,17 +34,6 @@ namespace Broker.TypesOfBrokers
             {
                 await mqttServer.StartAsync();
                 
-                Console.WriteLine("Server started.");
-
-                var message = new MqttApplicationMessageBuilder().WithTopic("HelloWorld").WithPayload("LOBOOOOOO").Build();
-                Console.WriteLine("Message Sended.");
-
-                // Now inject the new message at the broker.
-                await mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(message)
-                {
-                    SenderClientId = "SenderClientId"
-                });
-
                 // Stop and dispose the MQTT server if it is no longer needed!
                 Console.WriteLine("Press Enter to exit.");
                 Console.ReadLine();

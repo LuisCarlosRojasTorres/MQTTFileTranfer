@@ -1,6 +1,7 @@
 ﻿using Client.Model;
 using MQTTnet;
 using MQTTnet.Client;
+using System.Text;
 
 namespace Client.TypeOfClients
 {
@@ -26,26 +27,28 @@ namespace Client.TypeOfClients
             }
         }
 
-        public static async Task Connect_Client( BrokerOptions brokerOptions )
+        public static async Task Suscribe_Application_Message( BrokerOptions brokerOptions, string topic="demo")
         {
             
             var mqttFactory = new MqttFactory();
 
             using (var mqttClient = mqttFactory.CreateMqttClient())
             {
-                var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
+                //var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
+                var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("10.0.0.35").Build();
 
                 // Setup message handling before connecting so that queued messages
                 mqttClient.ApplicationMessageReceivedAsync += e =>
                 {
                     Console.WriteLine(">> Received application message!!.");
+                    Console.WriteLine($">> MessageDecoded: {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
                     e.DumpToConsole();
 
                     return Task.CompletedTask;
                 };                
                
                 var connectResponse = await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
-                //connectResponse.DumpToConsole();                
+                connectResponse.DumpToConsole();                
 
                 if (mqttClient.IsConnected) 
                 { 
@@ -62,7 +65,7 @@ namespace Client.TypeOfClients
                     .WithTopicFilter(
                         f =>
                         {
-                            f.WithTopic("HelloWorld");                            
+                            f.WithTopic("sample");                            
                         })
                     .Build();
 
@@ -77,31 +80,7 @@ namespace Client.TypeOfClients
                 await mqttClient.DisconnectAsync(mqttClientDisconnectOptions, CancellationToken.None);
                 Console.WriteLine(">> Client Disconected.");
             }
-        }
-
-        public static async Task Publish_Application_Message(BrokerOptions brokerOptions)
-        {
-            var mqttFactory = new MqttFactory();
-
-            using (var mqttClient = mqttFactory.CreateMqttClient())
-            {
-                var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
-
-                await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
-
-                var applicationMessage = new MqttApplicationMessageBuilder()
-                    .WithTopic("samples/temperature/living_room")
-                    .WithPayload("19.5")
-                    .Build();
-
-                await mqttClient.PublishAsync(applicationMessage, CancellationToken.None);
-
-                await mqttClient.DisconnectAsync();
-
-                Console.WriteLine("MQTT application message is published.");
-            }
-        }
-
+        }       
 
     }
 }

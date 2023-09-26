@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Client.Model;
+﻿using Client.Model;
 using Client.TypeOfClients;
 using Newtonsoft.Json;
 
@@ -16,7 +14,7 @@ using (StreamReader file = File.OpenText(Path.Combine("BrokerConfig.json")))
 Console.WriteLine($" CLIENTE");
 //await ClientNoKeys.Ping_Server(brokerOptions);
 
-ClientNoKeys.Connect_Client(brokerOptions);
+ClientNoKeys.Suscribe_Application_Message(brokerOptions);
 //await ClientNoKeys.Publish_Application_Message( brokerOptions );
 
 Console.WriteLine("Press Enter to exit.");

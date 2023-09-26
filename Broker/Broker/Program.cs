@@ -14,7 +14,7 @@ Console.WriteLine($" - Broker running at: {BrokerNoKeys.GetLocalIPAddress()}");
 Console.WriteLine($" - Broker Port: {brokerOptions.Port}");
 
 byte[] dummyFile = BrokerNoKeys.FileToByteArrayConverter(brokerOptions.FileToTransfer);
-BrokerNoKeys.Run_Minimal_Server(brokerOptions, "HelloWorld", dummyFile);
+await BrokerNoKeys.Run_Minimal_Server(brokerOptions, "HelloWorld", dummyFile);
 
 
 
