@@ -11,6 +11,7 @@ namespace Client.TypeOfClients
             var mqttFactory = new MqttFactory();
 
             using (var mqttClient = mqttFactory.CreateMqttClient())
+
             {
                 var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
 
@@ -37,7 +38,7 @@ namespace Client.TypeOfClients
                 // Setup message handling before connecting so that queued messages
                 mqttClient.ApplicationMessageReceivedAsync += e =>
                 {
-                    Console.WriteLine(">> Received application message.");
+                    Console.WriteLine(">> Received application message!!.");
                     e.DumpToConsole();
 
                     return Task.CompletedTask;
@@ -46,7 +47,14 @@ namespace Client.TypeOfClients
                 var connectResponse = await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
                 //connectResponse.DumpToConsole();                
 
-                if (mqttClient.IsConnected) { Console.WriteLine(">> Client connected!!"); }
+                if (mqttClient.IsConnected) 
+                { 
+                    Console.WriteLine(">> Client connected!!"); 
+                }
+                else
+                {
+                    Console.WriteLine(">> Client NOT connected!!");
+                }
 
                 // Create the subscribe options including several topics with different options.
                 // It is also possible to all of these topics using a dedicated call of _SubscribeAsync_ per topic.
@@ -61,13 +69,36 @@ namespace Client.TypeOfClients
                 var suscribedResponse = await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
                 
                 // The response contains additional data sent by the server after subscribing.
-                
+
                 Console.WriteLine(">> Press enter to exit.");
                 Console.ReadLine();
 
                 var mqttClientDisconnectOptions = mqttFactory.CreateClientDisconnectOptionsBuilder().Build();
                 await mqttClient.DisconnectAsync(mqttClientDisconnectOptions, CancellationToken.None);
                 Console.WriteLine(">> Client Disconected.");
+            }
+        }
+
+        public static async Task Publish_Application_Message(BrokerOptions brokerOptions)
+        {
+            var mqttFactory = new MqttFactory();
+
+            using (var mqttClient = mqttFactory.CreateMqttClient())
+            {
+                var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
+
+                await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+
+                var applicationMessage = new MqttApplicationMessageBuilder()
+                    .WithTopic("samples/temperature/living_room")
+                    .WithPayload("19.5")
+                    .Build();
+
+                await mqttClient.PublishAsync(applicationMessage, CancellationToken.None);
+
+                await mqttClient.DisconnectAsync();
+
+                Console.WriteLine("MQTT application message is published.");
             }
         }
 

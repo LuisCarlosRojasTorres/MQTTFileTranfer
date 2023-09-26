@@ -13,9 +13,11 @@ using (StreamReader file = File.OpenText(Path.Combine("BrokerConfig.json")))
     Console.WriteLine($" - Broker Port: {brokerOptions.Port}");
 }
 
+Console.WriteLine($" CLIENTE");
 //await ClientNoKeys.Ping_Server(brokerOptions);
 
-await ClientNoKeys.Connect_Client(brokerOptions);
+ClientNoKeys.Connect_Client(brokerOptions);
+//await ClientNoKeys.Publish_Application_Message( brokerOptions );
 
 Console.WriteLine("Press Enter to exit.");
 Console.ReadLine();
