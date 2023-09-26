@@ -14,8 +14,4 @@ Console.WriteLine($" PUBLISHER");
 Console.WriteLine($" - Broker running at: {brokerOptions.Ip}");
 Console.WriteLine($" - Broker Port: {brokerOptions.Port}");
 
-await ClientNoKeys.Publish_Application_Message(brokerOptions);
-
-
-
-byte[] dummyFile = ClientNoKeys.FileToByteArrayConverter(brokerOptions.FileToTransfer);
+await ClientNoKeys.Publish_File(brokerOptions);

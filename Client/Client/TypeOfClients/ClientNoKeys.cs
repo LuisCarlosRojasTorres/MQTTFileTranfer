@@ -79,7 +79,73 @@ namespace Client.TypeOfClients
                 await mqttClient.DisconnectAsync(mqttClientDisconnectOptions, CancellationToken.None);
                 Console.WriteLine(">> Client Disconected.");
             }
-        }       
+        }
 
+        public static async Task Suscribe_File(BrokerOptions brokerOptions)
+        {
+            string fileName = "";
+
+            var mqttFactory = new MqttFactory();
+
+            using (var mqttClient = mqttFactory.CreateMqttClient())
+            {
+                var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
+
+                // Setup message handling before connecting so that queued messages
+                mqttClient.ApplicationMessageReceivedAsync += e =>
+                {
+                    if (e.ApplicationMessage.Topic == "filename")
+                    {
+                        fileName = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                        Console.WriteLine($">> Received filename: {fileName}");
+                    }
+                    else 
+                    {
+                        byte[] byteArrayFile = e.ApplicationMessage.Payload;
+                        Console.WriteLine(">> Received payload");
+                        File.WriteAllBytes(fileName, byteArrayFile);
+                    }
+                    return Task.CompletedTask;
+                };
+
+                var connectResponse = await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+                connectResponse.DumpToConsole();
+
+                if (mqttClient.IsConnected)
+                {
+                    Console.WriteLine(">> Client connected!!");
+                }
+                else
+                {
+                    Console.WriteLine(">> Client NOT connected!!");
+                }
+
+                // Create the subscribe options including several topics with different options.
+                // It is also possible to all of these topics using a dedicated call of _SubscribeAsync_ per topic.
+                var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
+                    .WithTopicFilter(
+                        f =>
+                        {
+                            f.WithTopic("filename");
+                        })
+                    .WithTopicFilter(
+                    f =>
+                    {
+                        f.WithTopic("fileByteArray");
+                    })
+                    .Build();
+
+                var suscribedResponse = await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
+
+                // The response contains additional data sent by the server after subscribing.
+
+                Console.WriteLine(">> Press enter to exit.");
+                Console.ReadLine();
+
+                var mqttClientDisconnectOptions = mqttFactory.CreateClientDisconnectOptionsBuilder().Build();
+                await mqttClient.DisconnectAsync(mqttClientDisconnectOptions, CancellationToken.None);
+                Console.WriteLine(">> Client Disconected.");
+            }
+        }
     }
 }

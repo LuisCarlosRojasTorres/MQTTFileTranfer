@@ -12,5 +12,5 @@ using (StreamReader file = File.OpenText(Path.Combine("BrokerConfig.json")))
     Console.WriteLine($" - Broker Port: {brokerOptions.Port}");
 }
 
-await ClientNoKeys.Suscribe_Application_Message(brokerOptions);
+await ClientNoKeys.Suscribe_File(brokerOptions);
 

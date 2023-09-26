@@ -1,0 +1,8 @@
+{
+  "ip": "localhost",
+  "port": "1883",
+  "publicKey": "chavePublica.pub",
+  "privateKey": "chavePrivada",
+  "fileToTransfer": "./dummyDirectory/dummyFile1.png",
+  "directoryToTransfer": "./dummyDirectory/"
+}
