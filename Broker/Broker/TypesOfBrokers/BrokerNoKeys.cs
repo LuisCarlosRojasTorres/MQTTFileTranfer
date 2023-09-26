@@ -22,7 +22,7 @@ namespace Broker.TypesOfBrokers
             throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
-        public static async Task Run_Minimal_Server(BrokerOptions brokerOptions, string topic, byte[] payload)
+        public static async Task Run_Minimal_Server(BrokerOptions brokerOptions)
         {
             //This sample starts a simple MQTT server which will accept any TCP connection.
             var mqttFactory = new MqttFactory();
@@ -40,13 +40,6 @@ namespace Broker.TypesOfBrokers
 
                 await mqttServer.StopAsync();
             }
-        }
-
-        public static byte[] FileToByteArrayConverter(string filePath)
-        {
-            byte[] fileToTransfer = File.ReadAllBytes(filePath);
-
-            return fileToTransfer;
-        }
+        }        
     }
 }

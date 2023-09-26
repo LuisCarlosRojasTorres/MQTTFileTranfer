@@ -34,16 +34,15 @@ namespace Client.TypeOfClients
 
             using (var mqttClient = mqttFactory.CreateMqttClient())
             {
-                //var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
-                var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("10.0.0.35").Build();
+                var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
+                //var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer("10.0.0.35").Build();
 
                 // Setup message handling before connecting so that queued messages
                 mqttClient.ApplicationMessageReceivedAsync += e =>
                 {
                     Console.WriteLine(">> Received application message!!.");
                     Console.WriteLine($">> MessageDecoded: {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                    e.DumpToConsole();
-
+                    
                     return Task.CompletedTask;
                 };                
                
@@ -65,7 +64,7 @@ namespace Client.TypeOfClients
                     .WithTopicFilter(
                         f =>
                         {
-                            f.WithTopic("sample");                            
+                            f.WithTopic(topic);                            
                         })
                     .Build();
 

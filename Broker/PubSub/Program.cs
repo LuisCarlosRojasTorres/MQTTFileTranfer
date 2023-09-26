@@ -1,4 +1,21 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using PubSub;
+using Newtonsoft.Json;
+using Client.Model;
 
-await ClientNoKeys.Publish_Application_Message("10.0.0.35", 1883);
+BrokerOptions brokerOptions;
+
+using (StreamReader file = File.OpenText(Path.Combine("BrokerConfig.json")))
+{
+    brokerOptions = JsonConvert.DeserializeObject<BrokerOptions>(file.ReadToEnd());
+}
+
+Console.WriteLine($" PUBLISHER");
+Console.WriteLine($" - Broker running at: {brokerOptions.Ip}");
+Console.WriteLine($" - Broker Port: {brokerOptions.Port}");
+
+await ClientNoKeys.Publish_Application_Message(brokerOptions);
+
+
+
+byte[] dummyFile = ClientNoKeys.FileToByteArrayConverter(brokerOptions.FileToTransfer);
