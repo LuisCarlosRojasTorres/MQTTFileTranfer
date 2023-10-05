@@ -14,4 +14,5 @@ Console.WriteLine($" PUBLISHER");
 Console.WriteLine($" - Broker running at: {brokerOptions.Ip}");
 Console.WriteLine($" - Broker Port: {brokerOptions.Port}");
 
-await ClientNoKeys.Publish_File(brokerOptions);
+//await ClientNoKeys.Publish_File(brokerOptions);
+await ClientNoKeys.Publish_Directory(brokerOptions);
