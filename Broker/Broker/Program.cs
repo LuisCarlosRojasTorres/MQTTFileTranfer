@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using Broker.Model;
+﻿using Broker.Model;
 using Broker.TypesOfBrokers;
+using System.Text.Json;
 
 BrokerOptions brokerOptions;
 
 using (StreamReader file = File.OpenText(Path.Combine("BrokerConfig.json")))
 {
-    brokerOptions = JsonConvert.DeserializeObject<BrokerOptions>(file.ReadToEnd());
+    brokerOptions = JsonSerializer.Deserialize<BrokerOptions>(file.ReadToEnd());
     Console.WriteLine($" BROKER");
     Console.WriteLine($" - Broker running at: {BrokerNoKeys.GetLocalIPAddress()}");
     Console.WriteLine($" - Broker Port: {brokerOptions.Port}");

@@ -2,7 +2,7 @@
 using MQTTnet.Client;
 using Client.Model;
 using PubSub.Model;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.Runtime.CompilerServices;
 
 namespace PubSub
@@ -35,7 +35,7 @@ namespace PubSub
                     string sftFileSerialized  = ConvertFileToJson(brokerOptions.FileToTransfer);
 
                     var applicationMessage = new MqttApplicationMessageBuilder()
-                    .WithTopic("SFTFile")
+                    .WithTopic(brokerOptions.Topic)
                     .WithPayload(sftFileSerialized)
                     .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                     .Build();
@@ -57,7 +57,7 @@ namespace PubSub
         private static string ConvertFileToJson(string filePath)
         {
             SftFile sftFile = new SftFile(filePath);
-            string sftFileSerialized = JsonConvert.SerializeObject(sftFile);
+            string sftFileSerialized = JsonSerializer.Serialize(sftFile);
             return sftFileSerialized;
         }
 
@@ -83,7 +83,7 @@ namespace PubSub
                         string sftFileSerialized = ConvertFileToJson(fileToTransfer);
 
                         var applicationMessage = new MqttApplicationMessageBuilder()
-                        .WithTopic("SFTFile")
+                        .WithTopic(brokerOptions.Topic)
                         .WithPayload(sftFileSerialized)
                         .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                         .Build();

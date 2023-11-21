@@ -23,7 +23,7 @@ namespace Client.TypeOfClients
                 // Setup message handling before connecting so that queued messages
                 mqttClient.ApplicationMessageReceivedAsync += e =>
                 {
-                    if (e.ApplicationMessage.Topic == "SFTFile")
+                    if (e.ApplicationMessage.Topic == brokerOptions.Topic)
                     {
                         SFTFileContent = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
                         Console.WriteLine($">> Received SFTFile");
@@ -33,7 +33,7 @@ namespace Client.TypeOfClients
                 };
 
                 var connectResponse = await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
-                connectResponse.DumpToConsole();
+                
 
                 if (mqttClient.IsConnected)
                 {
@@ -50,13 +50,8 @@ namespace Client.TypeOfClients
                     .WithTopicFilter(
                         f =>
                         {
-                            f.WithTopic("SFTFile");
-                        })
-                    .WithTopicFilter(
-                    f =>
-                    {
-                        f.WithTopic("fileByteArray");
-                    })
+                            f.WithTopic(brokerOptions.Topic);
+                        })                    
                     .Build();
 
                 var suscribedResponse = await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
@@ -79,7 +74,6 @@ namespace Client.TypeOfClients
 
             try 
             {
-                Directory.CreateDirectory(sftFile.ParentDirectory);
                 File.WriteAllBytes(sftFile.FileName, sftFile.Payload);
                 Console.WriteLine($">> SFTFile created");
                 VerifyChecksum(sftFile);

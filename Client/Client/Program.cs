@@ -8,8 +8,9 @@ using (StreamReader file = File.OpenText(Path.Combine("BrokerConfig.json")))
 {
     brokerOptions = JsonConvert.DeserializeObject<BrokerOptions>(file.ReadToEnd());
     Console.WriteLine($" SUBSCRIBER");
-    Console.WriteLine($" - Broker IP Adress: {brokerOptions.Ip}");
-    Console.WriteLine($" - Broker Port: {brokerOptions.Port}");
+    Console.WriteLine($" - Trying to connect to Broker at: {brokerOptions.Ip}");
+    Console.WriteLine($" - Trying to connect to Broker Port: {brokerOptions.Port}");
+    Console.WriteLine($" - Topic: {brokerOptions.Topic}");
 }
 
 await ClientNoKeys.Suscribe_File(brokerOptions);
