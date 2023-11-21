@@ -10,18 +10,25 @@ namespace PubSub.Model
 {
     public class SftFile
     {
-        public string ParentDirectory { get; set; }
         public string FileName { get; set; }
         public byte[] Payload { get; set; }
         public string HashMd5 { get; set; }
         public int NumOfTotalFiles { get; set; }
         public int Index { get; set; }
 
+        public SftFile()
+        {
+            this.FileName = "";
+            this.Payload = new byte[1];
+            this.HashMd5 = "";
+            this.NumOfTotalFiles = 0;
+            this.Index = 0;
+        }
+
         public SftFile(string filePath, int numOfTotalFiles = 1, int index = 1 ) 
         {
             try {
-                    this.FileName = filePath;
-                    this.ParentDirectory = System.IO.Path.GetDirectoryName(filePath);
+                    this.FileName = filePath;        
                     this.Payload = File.ReadAllBytes(filePath);
                     this.HashMd5 = this.CalculateHashMd5(filePath);
                     this.NumOfTotalFiles = numOfTotalFiles;
@@ -29,7 +36,6 @@ namespace PubSub.Model
                 }            
             catch {
                 this.FileName = "";
-                this.ParentDirectory = "";
                 this.Payload = new byte[1];
                 this.HashMd5 = "";
                 this.NumOfTotalFiles = 0;

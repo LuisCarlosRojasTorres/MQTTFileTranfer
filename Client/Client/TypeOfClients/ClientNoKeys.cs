@@ -1,7 +1,7 @@
 ﻿using Client.Model;
 using MQTTnet;
 using MQTTnet.Client;
-using Newtonsoft.Json;
+using System.Text.Json;
 using PubSub.Model;
 using System.IO;
 using System.Text;
@@ -69,7 +69,7 @@ namespace Client.TypeOfClients
 
         private static void ConvertJsonToFile(string SFTFileContent)
         {
-            SftFile sftFile = JsonConvert.DeserializeObject<SftFile>(SFTFileContent);
+            SftFile sftFile = JsonSerializer.Deserialize<SftFile>(SFTFileContent);
             Console.WriteLine($">> Converted SFTFile");
 
             try 
@@ -89,7 +89,7 @@ namespace Client.TypeOfClients
         private static string ConvertFileToJson(string filePath)
         {
             SftFile sftFile = new SftFile(filePath);
-            string sftFileSerialized = JsonConvert.SerializeObject(sftFile);
+            string sftFileSerialized = JsonSerializer.Serialize(sftFile);
             return sftFileSerialized;
         }
 
