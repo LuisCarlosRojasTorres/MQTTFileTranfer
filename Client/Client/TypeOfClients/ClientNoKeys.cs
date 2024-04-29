@@ -18,7 +18,23 @@ namespace Client.TypeOfClients
 
             using (var mqttClient = mqttFactory.CreateMqttClient())
             {
+                CancellationTokenSource timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(brokerOptions.ConnectionTimeout));
                 var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).Build();
+
+                // >> Begin start event
+                /*
+                mqttClient.DisconnectedAsync += async e =>
+                {
+                    if (e.ClientWasConnected)
+                    {
+                        // Use the current options as the new options.
+                        Console.WriteLine(" >> Broker Disconnected");                        
+                    }
+                };
+                */
+                // >> End start event
+
+
 
                 // Setup message handling before connecting so that queued messages
                 mqttClient.ApplicationMessageReceivedAsync += e =>
@@ -31,10 +47,29 @@ namespace Client.TypeOfClients
                     }                    
                     return Task.CompletedTask;
                 };
-
-                CancellationTokenSource timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(brokerOptions.ConnectionTimeout)); 
-                var connectResponse = await mqttClient.ConnectAsync(mqttClientOptions, timeoutToken.Token);
                 
+                //var connectResponse = await mqttClient.ConnectAsync(mqttClientOptions, timeoutToken.Token);
+
+                // > TryPing
+                while (true)
+                {
+                    try
+                    {
+                        // This code will also do the very first connect! So no call to _ConnectAsync_ is required in the first place.
+                        if (!await mqttClient.TryPingAsync())
+                        {
+                            await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+
+                            // Subscribe to topics when session is clean etc.
+                            Console.WriteLine("The MQTT client is connected.");
+                        }
+                    }
+                    catch
+                    {
+                        Console.WriteLine("ReConnection failed");
+                    }                    
+                }
+                // >> End TryPing
 
                 if (mqttClient.IsConnected)
                 {
