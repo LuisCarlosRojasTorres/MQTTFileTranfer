@@ -24,7 +24,8 @@ namespace PubSub
             {
                 var mqttClientOptions = new MqttClientOptionsBuilder().WithTcpServer(brokerOptions.Ip, brokerOptions.Port).WithCleanSession().Build();
 
-                await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);                
+                CancellationTokenSource timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(brokerOptions.ConnectionTimeout));
+                await mqttClient.ConnectAsync(mqttClientOptions, timeoutToken.Token);                
 
                 if (mqttClient.IsConnected)
                 {

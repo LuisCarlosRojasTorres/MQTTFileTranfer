@@ -32,7 +32,8 @@ namespace Client.TypeOfClients
                     return Task.CompletedTask;
                 };
 
-                var connectResponse = await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+                CancellationTokenSource timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(brokerOptions.ConnectionTimeout)); 
+                var connectResponse = await mqttClient.ConnectAsync(mqttClientOptions, timeoutToken.Token);
                 
 
                 if (mqttClient.IsConnected)
